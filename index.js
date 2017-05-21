@@ -3,6 +3,7 @@ if (!global.Promise) { global.Promise = require('promise-polyfill'); }
 
 var fs = require('fs');
 var path = require('path');
+var sass = require('node-sass');
 var Cmify = require('./cmify');
 var Core = require('css-modules-loader-core');
 var FileSystemLoader = require('./file-system-loader');
@@ -165,6 +166,39 @@ module.exports = function (browserify, options) {
     , rootDir: rootDir
     , tokensByFile: tokensByFile
   };
+
+  // Sass support
+
+  browserify.transform((filename) => {
+    var buffer = [];
+
+    if(!filename.match(/\.(scss|sass)$/)) return through();
+
+    var stream = through(function (chunk, enc, next) {
+      buffer.push(chunk);
+      next();
+    }, function (done) {
+      var data = Buffer.concat(buffer).toString();
+
+      sass.render({
+        file: filename,
+        data: data,
+        includePaths: [path.dirname(filename)],
+        importer: require('sass-module-importer')(),
+        indentedSyntax: !!filename.match(/\.sass$/)
+      }, (err, result) => {
+
+        if(err) return done(err);
+        for(let file of result.stats.includedFiles) stream.emit('file', file);
+        done(null, result.css);
+
+      });
+
+
+    });
+
+    return stream;
+  });
 
   browserify.transform(Cmify, transformOpts);
 

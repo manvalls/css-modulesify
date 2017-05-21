@@ -11,7 +11,7 @@ function Cmify (filename, opts) {
 
   stream.Transform.call(this);
 
-  this.cssFilePattern = new RegExp(opts.cssFilePattern || '\.css$');
+  this.cssFilePattern = new RegExp(opts.cssFilePattern || '\.(css|sass|scss)$');
   this._data = '';
   this._filename = filename;
   this._cssOutFilename = opts.cssOutFilename;
