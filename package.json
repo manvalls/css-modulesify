@@ -1,5 +1,5 @@
 {
-  "name": "css-modulesify",
+  "name": "css-modulesify-plus",
   "version": "0.28.0",
   "description": "A browserify transform to load CSS Modules",
   "main": "index.js",
@@ -27,7 +27,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/css-modules/css-modulesify.git"
+    "url": "https://github.com/manvalls/css-modulesify-plus.git"
   },
   "keywords": [
     "browserify-transform",
@@ -37,7 +37,7 @@
     "css"
   ],
   "bugs": {
-    "url": "https://github.com/css-modules/css-modulesify/issues"
+    "url": "https://github.com/manvalls/css-modulesify-plus/issues"
   },
-  "homepage": "https://github.com/css-modules/css-modulesify"
+  "homepage": "https://github.com/manvalls/css-modulesify-plus"
 }

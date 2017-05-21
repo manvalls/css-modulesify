@@ -56,7 +56,7 @@ var FileSystemLoader = (function () {
 
   _createClass(FileSystemLoader, [{
     key: 'fetch',
-    value: function fetch(_newPath, relativeTo, _trace) {
+    value: function fetch(_newPath, relativeTo, _trace, inputSource) {
       var _this = this;
 
       var newPath = _newPath.replace(/^["']|["']$/g, ''),
@@ -106,7 +106,7 @@ var FileSystemLoader = (function () {
           return resolve(tokens);
         }
 
-        _fs2['default'].readFile(fileRelativePath, 'utf-8', function (err, source) {
+        let listener = function (err, source) {
           if (err) reject(err);
           _this.core.load(source, rootRelativePath, trace, _this.fetch.bind(_this)).then(function (_ref) {
             var injectableSource = _ref.injectableSource;
@@ -116,7 +116,10 @@ var FileSystemLoader = (function () {
             _this.tokensByFile[fileRelativePath] = exportTokens;
             resolve(exportTokens);
           }, reject);
-        });
+        };
+
+        if(inputSource) listener(null, inputSource + '');
+        else _fs2['default'].readFile(fileRelativePath, 'utf-8', listener);
       });
     }
   }, {

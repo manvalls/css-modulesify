@@ -52,7 +52,7 @@ Cmify.prototype._flush = function (callback) {
   var relFilename = path.relative(this._rootDir, filename);
   tokensByFile[filename] = loader.tokensByFile[filename] = null;
 
-  loader.fetch(relFilename, '/').then(function (tokens) {
+  loader.fetch(relFilename, '/', undefined, this._data).then(function (tokens) {
     var deps = loader.deps.dependenciesOf(filename);
     var output = deps.map(function (f) {
       return 'require("' + f + '")';
