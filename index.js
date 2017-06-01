@@ -184,7 +184,7 @@ module.exports = function (browserify, options) {
         file: filename,
         data: data,
         includePaths: [path.dirname(filename)],
-        importer: require('sass-module-importer')(),
+        importer: require('sass-module-importer')({basedir: path.dirname(filename)}),
         indentedSyntax: !!filename.match(/\.sass$/)
       }, (err, result) => {
 
