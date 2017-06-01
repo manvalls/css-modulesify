@@ -63,8 +63,8 @@ var FileSystemLoader = (function () {
           trace = _trace || String.fromCharCode(this.importNr++);
       return new Promise(function (resolve, reject) {
         var relativeDir = _path2['default'].dirname(relativeTo),
-            rootRelativePath = _path2['default'].resolve(relativeDir, newPath),
-            rootRelativeDir = _path2['default'].join(_this.root, relativeDir),
+            rootRelativePath = _path2['default'].resolve(_this.root, newPath),
+            rootRelativeDir = _this.root,
             fileRelativePath = _path2['default'].resolve(rootRelativeDir, newPath);
 
         // if the path is not relative or absolute, try to resolve it in node_modules
@@ -91,7 +91,7 @@ var FileSystemLoader = (function () {
         }
         // otherwise add a dependency
         else {
-          var parentFilePath = _path2['default'].join(_this.root, relativeTo);
+          var parentFilePath = _this.root;
           if (!_this.deps.hasNode(parentFilePath)) {
             console.error('NO NODE', parentFilePath, fileRelativePath)
           }
