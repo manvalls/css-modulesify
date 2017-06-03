@@ -169,10 +169,13 @@ module.exports = function (browserify, options) {
 
   // Sass support
 
+  var Lock = require('y-lock');
+  var lock = new Lock();
+
   browserify.transform((filename) => {
     var buffer = [];
 
-    if(!filename.match(/\.(scss|sass)$/)) return through();
+    if(!filename.match(/\.(sass|scss)$/)) return through();
 
     var stream = through(function (chunk, enc, next) {
       buffer.push(chunk);
@@ -180,25 +183,30 @@ module.exports = function (browserify, options) {
     }, function (done) {
       var data = Buffer.concat(buffer).toString();
 
-      sass.render({
-        file: filename,
-        data: data,
-        includePaths: [path.dirname(filename)],
-        importer: require('sass-module-importer')({basedir: path.dirname(filename)}),
-        indentedSyntax: !!filename.match(/\.sass$/)
-      }, (err, result) => {
+      lock.take().then(() => {
 
-        if(err) return done(err);
-        for(let file of result.stats.includedFiles) stream.emit('file', file);
-        done(null, result.css);
+        sass.render({
+          file: filename,
+          data: data,
+          includePaths: [path.dirname(filename)],
+          importer: require('sass-module-importer')({basedir: path.dirname(filename)}),
+          indentedSyntax: !!filename.match(/\.sass$/)
+        }, (err, result) => {
+
+          lock.give();
+
+          if(err) return done(err);
+          for(let file of result.stats.includedFiles) stream.emit('file', file);
+          done(null, result.css);
+
+        });
 
       });
-
 
     });
 
     return stream;
-  });
+  }, transformOpts);
 
   browserify.transform(Cmify, transformOpts);
 
