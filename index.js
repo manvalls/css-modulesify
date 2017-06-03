@@ -2,6 +2,7 @@
 if (!global.Promise) { global.Promise = require('promise-polyfill'); }
 
 var fs = require('fs');
+var zlib = require('zlib');
 var path = require('path');
 var sass = require('node-sass');
 var Cmify = require('./cmify');
@@ -235,6 +236,7 @@ module.exports = function (browserify, options) {
       // write the css file
       if (cssOutFilename) {
         writes.push(writeFile(cssOutFilename, css));
+        writes.push(gzipAndWrite(cssOutFilename + '.gz', css));
       }
 
       // write the classname manifest
@@ -259,6 +261,23 @@ function writeFile (filename, content) {
       if (err) reject(err);
       else resolve();
     });
+  });
+}
+
+function gzipAndWrite (filename, content) {
+  return new Promise(function (resolve, reject) {
+    var gz, file;
+
+    gz = zlib.createGzip({level: 9, memLevel: 9});
+    gz.on('error', reject);
+    gz.write(content);
+    gz.end();
+
+    file = fs.createWriteStream(filename);
+    file.on('finish', resolve);
+    file.on('error', reject);
+    gz.pipe(file);
+
   });
 }
 
