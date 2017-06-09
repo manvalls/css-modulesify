@@ -234,7 +234,7 @@ module.exports = function (browserify, options) {
       var writes = [];
 
       // write the css file
-      if (cssOutFilename) {
+      if (cssOutFilename && css) {
         writes.push(writeFile(cssOutFilename, css));
         writes.push(gzipAndWrite(cssOutFilename + '.gz', css));
       }
